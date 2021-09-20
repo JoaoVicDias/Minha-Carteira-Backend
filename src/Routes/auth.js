@@ -1,32 +1,32 @@
 const express = require('express')
 const router = express.Router()
+const userServices = require('../Services/UserServices')
+const bycriptServices = require('../Services/BycriptServices')
 const user = require('../Middlewares/user')
-const UserModel = require('../Models/User')
-const bycript = require('bcrypt')
 
 
 
 router.post('/signup', async (req, res) => {
     const { name, email, password } = req.body;
 
-    if(!name) return res.json({message:'Você precisa escrever um nome!!'})
-    if(!email) return res.json({message:'Você precisa escrever um e-mail!!'})
-    if(!password) return res.json({message:'Você precisa escrever uma senha!!'})
+    if(!name) return res.status(400).send('Você precisa escrever um nome!!')
+    if(!email) return res.status(400).send('Você precisa escrever um e-mail!!')
+    if(!password) return res.status(400).send('Você precisa escrever uma senha!!')
 
-    const existingUser = await UserModel.findOne({where:{email:email}})
-    if(existingUser) return res.json({message:'Esse e-mail já está sendo usado, tente outro!!'})
+    const existingUser = await userServices.findUserByEmail(email)
+    if(existingUser) return res.status(406).send('Esse e-mail já está sendo usado, tente outro!!')
 
     try{
-        const encryptedPassword = await bycript.hash(password,7)
+        const encryptedPassword = await bycriptServices.encrypt(password)
 
         await UserModel.create({
             name:name,
             email:email,
             password:encryptedPassword
         })
-        res.json({message:"Sua conta foi criada com sucesso!!"})
+        res.status(200).send("Sua conta foi criada com sucesso!!")
     }catch(e){
-        res.json({message:"Alguma coisa aconteceu, tente novamente!!",error:e})
+        console.log('Alguma coisa deu errado, tente novamente.')
     }
 })
 
