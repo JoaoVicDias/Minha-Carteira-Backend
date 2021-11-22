@@ -3,7 +3,6 @@ const router = express.Router()
 const userServices = require('../Services/UserServices')
 const bycriptServices = require('../Services/BycriptServices')
 const jwtServices = require('../Services/JwtServices')
-const user = require('../Middlewares/user')
 
 
 
@@ -36,19 +35,15 @@ router.post('/signin', async (req, res) => {
 
     const existingUser = await userServices.findUserByEmail(email)
     if (!existingUser) return res.status(406).send('Seu e-mail está incorreto, tente novamente')
-
-    const userEmail = existingUser.dataValues.email;
-    const userName = existingUser.dataValues.name
-
+    
     const matchPassword = await bycriptServices.comparePassword(password,existingUser.dataValues.password)
     if (!matchPassword) return res.status(406).send('Sua senha está incorreta, tente novamente')
     
     try {
-        const token = await jwtServices.generateToken(userEmail,userName)
+        const token = await jwtServices.generateToken(existingUser)
         res.json({token})
     } catch(e){
-        res.status(404).send("Alguma coisa deu errado, tente novamente.")
-        console.log(e)
+        throw new Error(e)
     }
 })
 
