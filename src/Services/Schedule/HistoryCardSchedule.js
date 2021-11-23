@@ -28,7 +28,6 @@ const HistoryCardSchedule = async () => {
     }
 }
 
-
 const deleteExpiredCard = async () => {
     const allCards = await cardService.getAllCards();
 
