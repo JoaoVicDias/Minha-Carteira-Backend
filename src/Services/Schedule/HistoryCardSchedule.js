@@ -10,9 +10,11 @@ const HistoryCardSchedule = async () => {
 
     for (let i = 0; i < allCards.length; i++) {
         const item = allCards[i]
+        const dateInitItem = new Date(item.dateInit)
+        const dateEndItem = new Date(item.dateEnd)
         const repeatedCard = allHistoryCards.find(historyCard => historyCard.dataValues.card_id === item.dataValues.id && new Date(historyCard.dataValues.date).getMonth() + 1 === currentMonth)
 
-        if (repeatedCard) return
+        if (repeatedCard || new Date() < dateInitItem || new Date() > dateEndItem ) return
 
         await cardService.createCardInHistory({
             ...item.dataValues,
