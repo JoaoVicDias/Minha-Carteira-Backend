@@ -20,7 +20,6 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
-
 schedule.scheduleJob('50 * * * *', sheduleService.HistoryCardSchedule)
 schedule.scheduleJob('55 * * * *', sheduleService.deleteExpiredCard)
 
