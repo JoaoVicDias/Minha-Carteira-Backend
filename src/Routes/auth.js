@@ -34,7 +34,7 @@ router.post('/signin', async (req, res) => {
     const { email, password } = req.body;
 
     const existingUser = await userServices.findUserByEmail(email)
-    if (!existingUser) return res.status(406).send('Seu e-mail está incorreto, tente novamente')
+    if (!existingUser) return res.status(406).send('Esse e-mail já existe, tente outro!')
     
     const matchPassword = await bycriptServices.comparePassword(password,existingUser.dataValues.password)
     if (!matchPassword) return res.status(406).send('Sua senha está incorreta, tente novamente')
